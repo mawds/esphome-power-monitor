@@ -6,6 +6,13 @@ Monitors electric (GPIO10) and gas (GPIO11) consumption
 
 Current verson of pulse_monitor didn't work (crashed/locked the ESP32 after a few mins), so followed [these instructions](https://github.com/esphome/issues/issues/4807) and used old version of the code for it
 
+## ESP device
+
+Used [one of these](https://www.aliexpress.com/item/1005007036161205.html) - "ESP32-C6-DevKitC-1 ESP32-C6 Core Board WIFI6 BLE Zigbee Ultra-low Power Consumption Compatible ESP32 Series Modules" 
+
+ESPHome doesn't currently support Zigbee for ESP32s, so using it with WiFi
+
+`powermonitor.yaml` will need modifying if using a different board
 
 ## Initial flash
 
