@@ -1,0 +1,91 @@
+esphome:
+  name: powermonitor
+  friendly_name: PowerMonitor
+
+external_components:
+  - source: github://esphome/esphome@2023.7.1
+    components: [pulse_meter]
+
+esp32:
+  board: esp32-c6-devkitc-1
+  framework:
+    type: esp-idf
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: !secret ha_key
+
+ota:
+  - platform: esphome
+    password: !secret ota_password
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Powermonitor Fallback Hotspot"
+    password: !secret fallback_hotspot
+
+captive_portal:
+    
+  
+sensor:
+  - platform: pulse_meter
+    name: 'Electricity'
+    internal_filter: 75ms
+    id: sensor_pulse_meter_electric # Optional ID, necessary if you want to calculate the total daily energy
+    unit_of_measurement: 'W'
+    device_class: power
+    state_class: measurement
+    accuracy_decimals: 0
+    pin: 
+      number: GPIO10
+      mode:
+        input: true
+        pullup: true
+    filters:
+      - multiply: 60 # (60s / impulse constant) * (1000W / 1kW)
+    total:
+      name: "Electricity Total"
+      unit_of_measurement: "kWh"
+      device_class: energy
+      state_class: total_increasing
+      accuracy_decimals: 3
+      filters:
+        - multiply: 0.001  # (1/1000 pulses per kWh)
+        # - throttle_average: 10s
+        # - filter_out: NaN
+
+  - platform: pulse_meter
+    name: 'Gas'
+    internal_filter: 250ms
+    id: sensor_pulse_meter_gas # Optional ID, necessary if you want to calculate the total daily energy
+    unit_of_measurement: 'kW'
+    device_class: power
+    state_class: measurement
+    accuracy_decimals: 0
+    pin: 
+      number: GPIO11
+      mode:
+        input: true
+        pullup: false 
+    filters:
+      - multiply: 5440
+      # - throttle_average: 10s
+      # - filter_out: NaN
+    total:
+      name: "Gas Total"
+      unit_of_measurement: "kWh"
+      device_class: energy
+      state_class: total_increasing
+      accuracy_decimals: 3
+      filters:
+        - multiply: 0.110219
+        # - throttle_average: 10s
+        # - filter_out: NaN
