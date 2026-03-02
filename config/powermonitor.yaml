@@ -38,12 +38,12 @@ captive_portal:
 sensor:
   - platform: pulse_meter
     name: 'Electricity'
-    internal_filter: 75ms
+    internal_filter: 150ms
     id: sensor_pulse_meter_electric # Optional ID, necessary if you want to calculate the total daily energy
     unit_of_measurement: 'W'
     device_class: power
     state_class: measurement
-    accuracy_decimals: 0
+    accuracy_decimals: 3
     pin: 
       number: GPIO10
       mode:
@@ -66,10 +66,10 @@ sensor:
     name: 'Gas'
     internal_filter: 250ms
     id: sensor_pulse_meter_gas # Optional ID, necessary if you want to calculate the total daily energy
-    unit_of_measurement: 'kW'
+    unit_of_measurement: 'W'
     device_class: power
     state_class: measurement
-    accuracy_decimals: 0
+    accuracy_decimals: 5
     pin: 
       number: GPIO11
       mode:
