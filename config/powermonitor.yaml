@@ -38,7 +38,8 @@ captive_portal:
 sensor:
   - platform: pulse_meter
     name: 'Electricity'
-    internal_filter: 150ms
+    # internal_filter: 150us
+    internal_filter_mode: PULSE
     id: sensor_pulse_meter_electric # Optional ID, necessary if you want to calculate the total daily energy
     unit_of_measurement: 'W'
     device_class: power
