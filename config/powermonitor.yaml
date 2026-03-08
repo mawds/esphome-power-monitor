@@ -2,9 +2,6 @@ esphome:
   name: powermonitor
   friendly_name: PowerMonitor
 
-external_components:
-  - source: github://esphome/esphome@2023.7.1
-    components: [pulse_meter]
 
 esp32:
   board: esp32-c6-devkitc-1
@@ -38,9 +35,9 @@ captive_portal:
 sensor:
   - platform: pulse_meter
     name: 'Electricity'
-    # internal_filter: 150us
+    internal_filter: 30us
     internal_filter_mode: PULSE
-    id: sensor_pulse_meter_electric # Optional ID, necessary if you want to calculate the total daily energy
+    id: sensor_pulse_meter_electric 
     unit_of_measurement: 'W'
     device_class: power
     state_class: measurement
@@ -51,7 +48,15 @@ sensor:
         input: true
         pullup: true
     filters:
-      - multiply: 60 # (60s / impulse constant) * (1000W / 1kW)
+      - multiply: 60 
+      - lambda: |-
+          if (x > 20000) {
+            return {};  
+          }
+          return x;
+      #- throttle_average: 5s
+      - filter_out: NaN
+          
     total:
       name: "Electricity Total"
       unit_of_measurement: "kWh"
@@ -60,13 +65,12 @@ sensor:
       accuracy_decimals: 3
       filters:
         - multiply: 0.001  # (1/1000 pulses per kWh)
-        # - throttle_average: 10s
-        # - filter_out: NaN
+
 
   - platform: pulse_meter
     name: 'Gas'
     internal_filter: 250ms
-    id: sensor_pulse_meter_gas # Optional ID, necessary if you want to calculate the total daily energy
+    id: sensor_pulse_meter_gas 
     unit_of_measurement: 'W'
     device_class: power
     state_class: measurement
@@ -78,8 +82,6 @@ sensor:
         pullup: false 
     filters:
       - multiply: 5440
-      # - throttle_average: 10s
-      # - filter_out: NaN
     total:
       name: "Gas Total"
       unit_of_measurement: "kWh"
@@ -88,5 +90,4 @@ sensor:
       accuracy_decimals: 3
       filters:
         - multiply: 0.110219
-        # - throttle_average: 10s
-        # - filter_out: NaN
+
